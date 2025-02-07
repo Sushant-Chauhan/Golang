@@ -11,7 +11,7 @@ func main() {
 	// }
 
 	sum := 0
-	// Iterate over slice nums
+	// Iterate over slice nums :-
 	for i, n := range nums {
 		fmt.Println("num, i : ", n, i)
 		sum += n
@@ -19,14 +19,15 @@ func main() {
 	fmt.Println("sum = ", sum)
 
 	m := map[string]string{"fname": "sushant", "lname": "chauhan"}
-	// Iterate over map m
+	// Iterate over map m :-
 	for k, v := range m {
 		fmt.Println("k,v : ", k, v)
 	}
 
-	// Iterate over string "golangg"   [unicode code point rune ]
+	//  unicode code point rune
 	// starting byte of rune
 	// 255 -> 1 byte , 2 byte
+	// Iterate over string :-
 	for i, ch := range "golangg" {
 		fmt.Println("i, str : ", i, string(ch))
 	}
