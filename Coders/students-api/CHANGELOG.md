@@ -9,3 +9,7 @@ Then added a local.yaml configuration file
 file based config is preferred -->
 
 Created a storage folder -> storage.db (added this storage folder to .gitignore becoz we don't want out database to go to Repository)
+
+Folder : internal/config/config.go 
+> Code to Parse local.yaml Config File 
+
