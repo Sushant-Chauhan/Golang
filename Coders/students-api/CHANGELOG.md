@@ -13,3 +13,6 @@ Created a storage folder -> storage.db (added this storage folder to .gitignore 
 Folder : internal/config/config.go 
 > Code to Parse local.yaml Config File 
 
+
+go get github.com/mattn/go-sqlite3
+go get github.com/go-playground/validator

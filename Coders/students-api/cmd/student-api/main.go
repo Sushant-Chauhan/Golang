@@ -13,6 +13,7 @@ import (
 
 	"github.com/Sushant-Chauhan/Go/Coders/students-api/internal/config"
 	"github.com/Sushant-Chauhan/Go/Coders/students-api/internal/http/handlers/student"
+	"github.com/Sushant-Chauhan/Go/Coders/students-api/internal/storage/sqlite"
 )
 
 func main() {
@@ -22,15 +23,22 @@ func main() {
 	cfg := config.MustLoad()
 	fmt.Printf("Config: %+v\n", cfg)
 
-	// setup custom logger : here i will be using inbuild logger
-	// setup database
+	// database setup
+	_, err := sqlite.New(cfg)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	slog.Info("Storage initialized successfully", slog.String("env", cfg.Env), slog.String("version", "1.0.0"))
 
 	// setup router
 	router := http.NewServeMux()
+
+	// setup custom logger : here i will be using inbuild logger
 	// router.HandleFunc("POST /", func(w http.ResponseWriter, r *http.Request) {
 	// 	w.Write([]byte("Welcome to Students API !!"))
 	// })
-	router.HandleFunc("POST /api/students", student.New())
+	c router.HandleFunc("POST /api/students", student.New())
 
 	// setup server
 	server := http.Server{
@@ -58,7 +66,7 @@ func main() {
 	defer cancel()
 
 	//graceful shutdown
-	err := server.Shutdown(ctx)
+	err = server.Shutdown(ctx)
 	if err != nil {
 		slog.Error("failed to shutdown server", slog.String("error", err.Error()))
 	}
@@ -67,3 +75,6 @@ func main() {
 
 // Run :(with congig file in parameter) from the root (where the project starts)
 // go run .\cmd\student-api\main.go -config .\config\local.yaml
+
+// go env CGO_ENABLED  //check if CGO_ENABLED is set to 0 or 1
+// set CGO_ENABLED=1
