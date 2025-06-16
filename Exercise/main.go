@@ -432,36 +432,47 @@ import (
 func sayHello() {
 	fmt.Println("(sayHello) Hello from goroutine 1")
 }
+
 func sendMessage(ch chan string) {
 	fmt.Println("(sendMessage) Sending message to channel ...")
 	ch <- "Hello from goroutine"
 	fmt.Println("(sendMessage) Message sent to channel ...")
 }
 
-func main() {
-	fmt.Println("------ goroutine ------")
-	go sayHello() // Start a goroutine
-	fmt.Println("(main) Main function is running")
-	time.Sleep(1 * time.Second) // Wait for goroutine to finish
-	fmt.Println("(main) Main function is exiting")
-	//Think of it as saying: "Hey, Go, run this function in the background while I keep doing other things."
-
-	fmt.Println("------ channel ------")
-	messageChannel := make(chan string)                 // Create a channel of type string
-	go sendMessage(messageChannel)                      // Start a goroutine to send messages
-	newmessage := <-messageChannel                      // Receive message from channel
-	fmt.Println("(main) Received message:", newmessage) // Print the received message
-
-	fmt.Println("------ 🔄 Example: Multiple Goroutines Communicating via Channels ------")
-	ch
-}
-
 func worker(id int, ch chan string) {
 	for i := 0; i < 3; i++ {
 		ch <- fmt.Sprintf("Worker %d: Task %d completed", id, i+1)
 	}
-	close(ch) // Close the channel when done
+}
+
+func main() {
+	fmt.Println("------ goroutine ------")
+	go sayHello()
+	fmt.Println("(main) Main function is running")
+	time.Sleep(1 * time.Second)
+	fmt.Println("(main) Main function is exiting")
+
+	fmt.Println("------ channel ------")
+	messageChannel := make(chan string)
+	go sendMessage(messageChannel)
+	newmessage := <-messageChannel
+	fmt.Println("(main) Received message:", newmessage)
+
+	fmt.Println("------ ✅ Example: Multiple Goroutines Communicating via Channels ------")
+
+	// Multiple goroutines, single channel
+	ch := make(chan string)
+
+	// Start 2 workers
+	go worker(1, ch)
+	go worker(2, ch)
+
+	// Read 6 messages (2 workers × 3 messages each)
+	for i := 0; i < 6; i++ {
+		msg := <-ch
+		fmt.Println("(main) Received:", msg)
+	}
 }
 
 // Answer:
-// can use channels instead of sync.WaitGroup to wait for goroutines to finish — but that doesn’t mean you always should.
+// Yes, you can use channels instead of sync.WaitGroup to wait for goroutines to finish — but that doesn’t mean you always should.
