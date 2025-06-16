@@ -467,31 +467,109 @@
 
 // -----------------------------------------------------------------------------------
 
+///  MCQS
+
+// package main
+
+// import "fmt"
+
+// func main() {
+// 	evenCh := make(chan int)
+// 	oddCh := make(chan int)
+
+// 	go print(oddCh, evenCh)
+// 	go print(oddCh, evenCh)
+// 	go print(oddCh, evenCh)
+// 	go print(oddCh, evenCh)
+// 	go print(oddCh, evenCh)
+// 	go print(oddCh, evenCh)
+// 	go print(oddCh, evenCh)
+// 	go print(oddCh, evenCh)
+// 	go print(oddCh, evenCh)
+// 	go print(oddCh, evenCh)
+// 	go print(oddCh, evenCh)
+
+// 	for i := 0; i <= 10; i++ {
+// 		if i%2 == 0 {
+// 			evenCh <- i
+// 		} else {
+// 			oddCh <- i
+// 		}
+// 	}
+
+// 	go print(oddCh, evenCh)
+// 	go print(oddCh, evenCh)
+// 	go print(oddCh, evenCh)
+// 	go print(oddCh, evenCh)
+// 	go print(oddCh, evenCh)
+// 	go print(oddCh, evenCh)
+// 	go print(oddCh, evenCh)
+// 	go print(oddCh, evenCh)
+// 	go print(oddCh, evenCh)
+// 	go print(oddCh, evenCh)
+// }
+
+// func print(oddCh, evenCh <-chan int) {
+// 	fmt.Println("Printing odd and even numbers...")
+// 	for {
+// 		select {
+
+// 		case i := <-oddCh:
+// 			fmt.Println(i)
+
+// 		case i := <-evenCh:
+// 			fmt.Println(i)
+// 		}
+// 	}
+// }
+
+///-------------------------
+
+// CHATGPT:
+
+// 1 Goroutine
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"time"
+)
+
+func sayHello() {
+	fmt.Println("(sayHello) Hello from goroutine 1")
+}
+func sendMessage(ch chan string) {
+	fmt.Println("(sendMessage) Sending message to channel ...")
+	ch <- "Hello from goroutine"
+	fmt.Println("(sendMessage) Message sent to channel ...")
+}
 
 func main() {
-	evenCh := make(chan int)
-	oddCh := make(chan int)
+	fmt.Println("------ goroutine ------")
+	go sayHello() // Start a goroutine
+	fmt.Println("(main) Main function is running")
+	time.Sleep(1 * time.Second) // Wait for goroutine to finish
+	fmt.Println("(main) Main function is exiting")
+	//Think of it as saying: "Hey, Go, run this function in the background while I keep doing other things."
 
-	go print(oddCh, evenCh)
-	for i := 0; i <= 10; i++ {
-		if i%2 == 0 {
-			evenCh <- i
-		} else {
-			oddCh <- i
-		}
-	}
+	fmt.Println("------ channel ------")
+	messageChannel := make(chan string)                 // Create a channel of type string
+	go sendMessage(messageChannel)                      // Start a goroutine to send messages
+	newmessage := <-messageChannel                      // Receive message from channel
+	fmt.Println("(main) Received message:", newmessage) // Print the received message
+
+	fmt.Println("------ 🔄 Example: Multiple Goroutines Communicating via Channels ------")
+	ch
 }
-// 
-func print(oddCh, evenCh <-chan int) {
-	for {
-		select {
-		case i := <-oddCh:
-			fmt.Println(i)
-		case i := <-evenCh:
-			fmt.Println(i)
-		}
+
+func worker(id int, ch chan string) {
+	for i := 0; i < 3; i++ {
+		ch <- fmt.Sprintf("Worker %d: Task %d completed", id, i+1)
 	}
+	close(ch) // Close the channel when done
 }
+
+
+// ✅ Short Answer: 
+// Yes, you can use channels instead of sync.WaitGroup to wait for goroutines to finish — but that doesn’t mean you always should.
+
